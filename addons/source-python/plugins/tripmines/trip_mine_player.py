@@ -15,6 +15,7 @@ class TripMinePlayer:
         self.player = player
         self.mines = 0
         self.last_mine_time = 0
+        self.total_mines_planted = 0
 
     def __eq__(self, other):
         return self.player.index == other.player.index

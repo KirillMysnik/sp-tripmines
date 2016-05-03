@@ -257,6 +257,8 @@ class TripMine:
               attenuation=Attenuation.STATIC).play()
 
     def destroy(self):
+        player_manager[self.owner.index].total_mines_planted -= 1
+
         # Remove child entities
         for child_entity in (self.prop, self.beam, self.beam_target):
             child_entity.remove()
@@ -347,6 +349,9 @@ class TripMineManager(list):
         self.clear()
         self._current_id = 0
 
+        for player in player_manager.values():
+            player.total_mines_planted = 0
+
     def destroy_all(self):
         for trip_mine in tuple(self):
             trip_mine.destroy()
@@ -385,17 +390,24 @@ def get_mine_denial_reason(player):
     if player.player.team not in (teams_by_name['t'], teams_by_name['ct']):
         return strings['fail wrong_team']
 
-    if player.mines <= 0:
+    if config_manager['mines_stock'] != -1 and player.mines <= 0:
         return strings['fail no_mines']
+
+    if player.total_mines_planted >= config_manager['mines_limit'] > 0:
+        return strings['fail too_many']
 
     return None
 
 
 def use_mine(player, end_position, normal):
     player.mines -= 1
+    player.total_mines_planted += 1
     player.last_mine_time = time()
 
-    tell(player, strings['mines_left'].tokenize(mines=player.mines))
+    # Negative mines number indicates that infinite mines are turned on
+    if player.mines >= 0:
+        tell(player, strings['mines_left'].tokenize(mines=player.mines))
+
     trip_mine_manager.create( player.player, end_position, normal)
 
 

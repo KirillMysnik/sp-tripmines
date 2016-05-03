@@ -23,7 +23,19 @@ config_manager.controlled_cvar(
     int_handler,
     "mines_stock",
     default=3,
-    description="Initial number of mines given to a player"
+    description="Initial number of mines given to a player. Special values: "
+                "0 - don't give any mines, -1 - infinite mines."
+                "(ONLY SET IT TO -1 WITH NON-ZERO mines_limit OPTION!!!)"
+)
+config_manager.controlled_cvar(
+    int_handler,
+    "mines_limit",
+    default=0,
+    description="Maximum number of planted mines player can keep at a time. "
+                "Useful for DM servers with remove_on_death "
+                "option turned off "
+                "OR for servers with infinite_mines turned on. "
+                "Set to 0 to disable."
 )
 config_manager.controlled_cvar(
     int_handler,
