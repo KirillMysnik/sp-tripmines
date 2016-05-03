@@ -5,7 +5,7 @@ from time import time
 from colors import Color
 from commands.client import ClientCommand
 from effects import temp_entities
-from engines.sound import Attenuation, Sound
+from engines.sound import Attenuation, Sound, SOUND_FROM_WORLD
 from engines.trace import (
     ContentMasks, engine_trace, GameTrace, MAX_TRACE_LENGTH, Ray,
     TraceFilterSimple)
@@ -253,8 +253,10 @@ class TripMine:
 
         # Explosion sound
         Sound(choice(EXPLOSION_SOUNDS),
-              index=self.prop.index,
-              attenuation=Attenuation.STATIC).play()
+              index=SOUND_FROM_WORLD,
+              attenuation=Attenuation.NORMAL,
+              origin=self.prop.origin,
+              direction=self.normal).play()
 
     def destroy(self):
         player_manager[self.owner.index].total_mines_planted -= 1
